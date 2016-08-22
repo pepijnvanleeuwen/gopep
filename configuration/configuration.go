@@ -1,22 +1,3 @@
-// Copyright (c) 2016 Pepijn van Leeuwen
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
 package configuration
 
 import (
@@ -25,32 +6,41 @@ import (
 	"io/ioutil"
 )
 
+// Twitter is the name of the Twitter module.
 const Twitter string = "Twitter"
 
+// Config contains the application's configuration.
 var Config Configuration
 
+// Configuration is a structure that contains a slice of modules.
 type Configuration struct {
 	Modules []Module
 }
 
+// Module is a structure that contains the name of a module, and its payload.
 type Module struct {
 	Name    string
 	Payload Payload
 }
 
+// Payload is a structure that contains JSON-encoded values that can be used
+// in the module it belongs to.
 type Payload struct {
 	Data string // JSON encoded payload.
 }
 
+// LoadConfig loads the config from the default location 'config.json'.
 func LoadConfig() error {
-	// Try to load the config from the relative path of current executable.
-	if d, err := ioutil.ReadFile("config.json"); err != nil {
+	data, err := ioutil.ReadFile("config.json")
+
+	if err != nil {
 		return err
-	} else {
-		return json.Unmarshal(d, &Config)
 	}
+
+	return json.Unmarshal(data, &Config)
 }
 
+// GetPayload gets the payload for the specified module name.
 func GetPayload(moduleName string) (Payload, error) {
 	for _, m := range Config.Modules {
 		if m.Name == moduleName {
