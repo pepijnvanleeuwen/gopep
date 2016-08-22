@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/jessevdk/go-flags"
 	"github.com/pepijnvanleeuwen/gopep/configuration"
@@ -9,22 +10,24 @@ import (
 )
 
 var opts struct {
-	Module string `short:"m" long:"module" description:"The module to use. Required."`
-	Action string `short:"a" long:"action" description:"The action to perform. Required."`
-	Value  string `short:"v" long:"value" description:"The value to pass to the action."`
+	Module string `short:"m" long:"module" description:"The module to use."`
+	Action string `short:"a" long:"action" description:"The action to perform."`
+	Value  string `short:"v" long:"value" description:"The value to pass to the selected action."`
 }
 
 func main() {
+	log.Println("Loading config.json")
 	err := configuration.LoadConfig()
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
+	log.Println("Parsing flags")
 	flags.Parse(&opts)
 
 	err = LoadModule()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalln(err)
 	}
 }
 

@@ -1,8 +1,10 @@
 package twitter
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/ChimeraCoder/anaconda"
@@ -11,6 +13,7 @@ import (
 
 var api *anaconda.TwitterApi
 var config payload
+var initialized bool
 
 type payload struct {
 	consumerKey       string
@@ -19,24 +22,36 @@ type payload struct {
 	accessTokenSecret string
 }
 
-func init() {
-	payload, err := configuration.GetPayload(configuration.Twitter)
+func initialize() {
+	log.Println("Initializing 'twitter' module")
 
+	payload, err := configuration.GetPayload(configuration.Twitter)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
-	if err := json.Unmarshal([]byte(payload.Data), &config); err != nil {
-		panic(err)
+	data, err := base64.StdEncoding.DecodeString(payload)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if err := json.Unmarshal(data, &config); err != nil {
+		log.Fatalln(err)
 	}
 
 	anaconda.SetConsumerKey(config.consumerKey)
 	anaconda.SetConsumerSecret(config.consumerSecret)
 	api = anaconda.NewTwitterApi(config.accessToken, config.accessTokenSecret)
+
+	initialized = true
 }
 
 // Load loads the specified action by passing the provided value.
 func Load(action, value string) error {
+	if !initialized {
+		initialize()
+	}
+
 	switch action {
 	case "like", "l":
 		return Like(value)
