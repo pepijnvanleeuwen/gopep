@@ -1,2 +1,9 @@
 {
+   "Modules":
+   [
+      {
+         "Name":"twitter",
+         "Payload":"eyAgDQogICAiY29uc3VtZXJLZXkiOm51bGwsDQogICAiY29uc3VtZXJTZWNyZXQiOm51bGwsDQogICAiYWNjZXNzVG9rZW4iOm51bGwsDQogICAiYWNjZXNzVG9rZW5TZWNyZXQiOm51bGwNCn0="
+      }
+   ]
 }
